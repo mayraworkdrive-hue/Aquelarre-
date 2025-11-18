@@ -1,0 +1,41 @@
+import { useState } from 'react'
+import axios from 'axios'
+
+function App() {
+  const [email, setEmail] = useState('')
+  const [pregunta, setPregunta] = useState('')
+  const [lectura, setLectura] = useState('')
+  const [cargando, setCargando] = useState(false)
+
+  const pedirLectura = async () => {
+    setCargando(true)
+    try {
+      const res = await axios.post('https://aquelarre-backend.onrender.com/reading', {
+        email, question: pregunta
+      })
+      setLectura(res.data.lectura)
+    } catch (e) {
+      alert(e.response?.data?.detail || "Error de magia")
+    }
+    setCargando(false)
+  }
+
+  return (
+    <div style={{minHeight:'100vh', background:'#1a0033', color:'white', padding:'20px', fontFamily:'Georgia'}}>
+      <h1 style={{textAlign:'center', fontSize:'2.5em'}}>🖤 AQUELARRE 🖤</h1>
+      <div style={{maxWidth:'500px', margin:'0 auto'}}>
+        <input placeholder="Tu email, bruja" value={email} onChange={e=>setEmail(e.target.value)}
+          style={{width:'100%', padding:'15px', marginBottom:'10px', background:'#000', color:'white', border:'1px solid purple', borderRadius:'10px'}} />
+        <textarea placeholder="¿Qué quieres saber hoy?" value={pregunta} onChange={e=>setPregunta(e.target.value)}
+          style={{width:'100%', height:'100px', padding:'15px', background:'#000', color:'white', border:'1px solid purple', borderRadius:'10px', marginBottom:'15px'}} />
+        <button onClick={pedirLectura} disabled={cargando}
+          style={{width:'100%', padding:'15px', background:'#9900ff', color:'white', border:'none', borderRadius:'10px', fontSize:'1.2em'}}>
+          {cargando ? 'Valeria está leyendo las cartas...' : 'INVOCAR A VALERIA'}
+        </button>
+        {lectura && <div style={{marginTop:'30px', padding:'20px', background:'#000', border:'2px solid purple', borderRadius:'15px'}}>{lectura}</div>}
+      </div>
+    </div>
+  )
+}
+
+export default App
